@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header class="app-header">
-      <h1>Drug2QR</h1>
+      <h1>PharmaLens</h1>
       <p class="subtitle">Medikamentenpläne digitalisieren</p>
     </header>
     
@@ -27,7 +27,7 @@
       </div>
 
       <!-- OCR Processing View -->
-      <MultiOcrProcessor 
+      <OllamaOcrProcessor 
         v-if="currentView === 'processing'"
         :image-blob="capturedImage"
         @completed="handleOcrCompleted"
@@ -70,11 +70,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import CameraScanner from './components/CameraScanner.vue'
-import MultiOcrProcessor from './components/MultiOcrProcessor.vue'
+import OllamaOcrProcessor from './components/OllamaOcrProcessor.vue'
 import MedicationPlan from './components/MedicationPlan.vue'
 import QRCodeDisplay from './components/QRCodeDisplay.vue'
 import DebugConsole from './components/DebugConsole.vue'
-import multiOcrService from './services/multiOcrService.js'
 import { generateBMP26XML } from './utils/bmp26Generator.js'
 
 // Reactive state

@@ -171,6 +171,36 @@ services:
 - `/public/install-cert.html` - Instructions for certificate installation
 - `wsl-port-manager.bat` - Enhanced with Option M for mobile access
 
+## WSL2 Memory Configuration for AI Models
+
+### Memory Requirements
+The Qwen2.5VL:7b model requires significant memory for image analysis:
+- Base model loading: ~6GB
+- Image inference: +10-12GB per high-resolution image
+- System overhead: +2-4GB
+- **Total recommended: 24GB minimum, 48GB optimal**
+
+### WSL2 Configuration
+Create/edit `C:\Users\[username]\.wslconfig`:
+```ini
+[wsl2]
+# networkingMode=mirrored
+memory=48GB      # For 64GB systems (75% allocation)
+processors=12    # For development (16 for production)
+swap=32GB        # Generous swap buffer
+```
+
+**After changes:**
+1. Run in PowerShell as Admin: `wsl --shutdown`
+2. Restart WSL2 by opening terminal
+3. Verify with: `free -h`
+
+### Known Issues
+- **Memory exhaustion during OCR**: The AI model can use up to 98% of available memory when analyzing complex medication plans
+- **Solution**: Allocate at least 48GB RAM to WSL2 on systems with 64GB total RAM
+- **Development**: 12 CPU threads sufficient
+- **Production**: Consider 16+ threads for parallel requests
+
 ## Important Notes
 
 - All UI text is in German - maintain German language
@@ -181,3 +211,4 @@ services:
 - **Current server runs on HTTP** - switch to HTTPS needed for camera
 - **Project renamed** from Drug2QR to PharmaLens (20.07.2025)
 - **See NEXT_STEPS.md** for current Docker/Ollama implementation status
+- **WSL2 requires minimum 48GB RAM allocation** for stable AI OCR operation

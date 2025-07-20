@@ -51,3 +51,19 @@ ngrok.tgz
 # PWA
 sw.*
 workbox-*.js
+
+# Ollama models (sehr groß - 6GB+!)
+docker/ollama/models/
+ollama-models/
+*.gguf
+*.bin
+*.onnx
+
+# Docker volumes
+docker-volumes/
+ollama-data/
+postgres-data/
+
+# Backend specific
+backend/node_modules/
+backend/.env

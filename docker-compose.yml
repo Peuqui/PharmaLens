@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # Ollama AI Service
+  ollama:
+    build:
+      context: .
+      dockerfile: ./docker/ollama/Dockerfile
+    image: pharmalens/ollama:latest
+    container_name: pharmalens_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_MODELS=/models
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+    networks:
+      - pharmalens_network
+
+  # Backend API Service
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    image: pharmalens/backend:latest
+    container_name: pharmalens_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=qwen2.5vl:7b
+      - FRONTEND_URL=http://localhost
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    networks:
+      - pharmalens_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Nginx Service
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+    image: pharmalens/frontend:latest
+    container_name: pharmalens_frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+    environment:
+      - BACKEND_URL=http://backend:3000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - pharmalens_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  ollama_data:
+    driver: local
+
+networks:
+  pharmalens_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
