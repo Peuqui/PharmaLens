@@ -176,7 +176,8 @@ services:
 - All UI text is in German - maintain German language
 - Camera access requires HTTPS (except localhost)
 - PWA features require HTTPS in production
-- QR code generation uses external API (`https://api.qrserver.com/v1/`)
+- QR code generation now uses local library (no external API)
 - Print layout optimized for A4 paper
 - **Current server runs on HTTP** - switch to HTTPS needed for camera
 - **Project renamed** from Drug2QR to PharmaLens (20.07.2025)
+- **See NEXT_STEPS.md** for current Docker/Ollama implementation status
