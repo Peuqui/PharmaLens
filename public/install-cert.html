@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSL-Zertifikat installieren</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .step {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        a {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>SSL-Zertifikat für Drug2QR installieren</h1>
+    
+    <div class="warning">
+        <strong>Wichtig:</strong> Dieses Zertifikat ist nur für den lokalen Gebrauch im Heimnetzwerk gedacht!
+    </div>
+
+    <h2>Schritt 1: CA-Zertifikat herunterladen</h2>
+    <p>Lade das CA-Zertifikat herunter:</p>
+    <a href="/certs/ca.crt" download="drug2qr-ca.crt">CA-Zertifikat herunterladen</a>
+
+    <h2>Schritt 2: Installation auf dem Mobilgerät</h2>
+    
+    <div class="step">
+        <h3>iOS (iPhone/iPad):</h3>
+        <ol>
+            <li>Öffne die heruntergeladene Datei</li>
+            <li>Gehe zu Einstellungen → Allgemein → VPN & Geräteverwaltung</li>
+            <li>Tippe auf das Profil "drug2qr-ca"</li>
+            <li>Tippe auf "Installieren" und gib dein Passcode ein</li>
+            <li>Gehe zu Einstellungen → Allgemein → Info → Zertifikatsvertrauenseinstellungen</li>
+            <li>Aktiviere den Schalter bei "drug2qr-ca"</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>Android:</h3>
+        <ol>
+            <li>Öffne die heruntergeladene Datei</li>
+            <li>Gib dem Zertifikat einen Namen (z.B. "Drug2QR")</li>
+            <li>Wähle "VPN und Apps" oder "WLAN" als Verwendungszweck</li>
+            <li>Tippe auf "OK"</li>
+        </ol>
+    </div>
+
+    <h2>Schritt 3: App öffnen</h2>
+    <p>Nach der Installation kannst du die App über HTTPS aufrufen:</p>
+    <ul>
+        <li><a href="https://192.168.0.1:5173">https://192.168.0.1:5173</a></li>
+        <li><a href="https://localhost:5173">https://localhost:5173</a></li>
+    </ul>
+</body>
+</html>

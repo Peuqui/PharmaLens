@@ -1,0 +1,53 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build
+dist/
+dist-ssr/
+*.local
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Certificates (sensitive)
+certs/
+certificates/
+*.pem
+*.key
+*.crt
+
+# Logs
+*.log
+vite.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Test files
+/public/test-*.html
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# OS files
+Thumbs.db
+
+# Downloaded binaries
+ngrok
+ngrok.tgz
+
+# PWA
+sw.*
+workbox-*.js

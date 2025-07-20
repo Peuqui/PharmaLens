@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bundesmedikationsplan - Wolfgang Peuckert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 8px;
+            background-color: #f5f5f5;
+            font-size: 11px;
+            line-height: 1.1;
+        }
+        .container {
+            background-color: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 8px;
+        }
+        .header h1 {
+            margin: 0 0 3px 0;
+            font-size: 16px;
+            color: #2563eb;
+        }
+        .header p {
+            margin: 0;
+            font-size: 10px;
+            color: #666;
+        }
+        .patient-info {
+            background-color: #dbeafe;
+            padding: 8px;
+            border-radius: 3px;
+            margin-bottom: 12px;
+        }
+        .patient-info h2 {
+            margin: 0 0 6px 0;
+            font-size: 13px;
+            color: #1e40af;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .info-item {
+            font-size: 10px;
+        }
+        .label {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 1px;
+        }
+        .medication-section h2 {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            color: #1e40af;
+        }
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        .medication-table th,
+        .medication-table td {
+            border: 1px solid #d1d5db;
+            padding: 3px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .medication-table th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+            font-size: 11px;
+            text-align: center;
+        }
+        .medication-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .time-cell {
+            text-align: center;
+            font-weight: bold;
+            font-size: 11px;
+            color: #1e40af;
+        }
+        .med-name {
+            font-weight: bold;
+            color: #1e40af;
+        }
+        .qr-section {
+            background-color: #fef3c7;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+        .qr-section h2 {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            color: #92400e;
+            text-align: center;
+        }
+        .qr-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .qr-display {
+            flex: 1;
+            text-align: center;
+            background-color: white;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #fbbf24;
+        }
+        .qr-info {
+            flex: 1;
+            background-color: white;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #fbbf24;
+        }
+        .qr-display h3 {
+            margin: 0 0 6px 0;
+            font-size: 11px;
+            color: #92400e;
+        }
+        .qr-info h3 {
+            margin: 0 0 6px 0;
+            font-size: 11px;
+            color: #92400e;
+        }
+        .qr-data {
+            background-color: #f3f4f6;
+            padding: 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 7px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .qr-image {
+            width: 240px;
+            height: 240px;
+            border: 1px solid #ddd;
+            margin: 3px auto;
+        }
+        .button {
+            background-color: #2563eb;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 3px;
+            font-size: 10px;
+        }
+        .button:hover {
+            background-color: #1d4ed8;
+        }
+        .button-green {
+            background-color: #059669;
+        }
+        .button-green:hover {
+            background-color: #047857;
+        }
+        .footer {
+            margin-top: 8px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 8px;
+        }
+        .success-message {
+            background-color: #d1fae5;
+            border: 1px solid #10b981;
+            padding: 6px;
+            border-radius: 3px;
+            margin: 6px 0;
+            color: #065f46;
+            font-size: 10px;
+            text-align: center;
+        }
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+                font-size: 10px;
+            }
+            .container {
+                box-shadow: none;
+                padding: 8px;
+            }
+            .button {
+                display: none;
+            }
+            .success-message {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 BUNDESMEDIKATIONSPLAN</h1>
+            <p>Nach BfArM-Standard (BMP 3.0) - Wolfgang Peuckert</p>
+        </div>
+
+        <div class="patient-info">
+            <h2>👤 Patientendaten</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="label">Name:</div>
+                    <div>Peuckert</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Vorname:</div>
+                    <div>Wolfgang</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Geburtsdatum:</div>
+                    <div>23.12.1938</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Adresse:</div>
+                    <div>Schlehenweg 12, 34266 Niestetal</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="medication-section">
+            <h2>💊 Aktuelle Medikation</h2>
+            <table class="medication-table">
+                <thead>
+                    <tr>
+                        <th>Nr.</th>
+                        <th>Medikament</th>
+                        <th>Wirkstoff</th>
+                        <th>Stärke</th>
+                        <th>Form</th>
+                        <th>7:00</th>
+                        <th>10:00</th>
+                        <th>11:00</th>
+                        <th>17:00</th>
+                        <th>19:00</th>
+                        <th>22:00</th>
+                        <th>Indikation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td class="med-name">Jardiance</td>
+                        <td>Empagliflozin</td>
+                        <td>10 mg</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td>Herzinsuffizienz</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td class="med-name">Eliquis</td>
+                        <td>Apixaban</td>
+                        <td>2,5 mg</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td>Antikoagulation</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td class="med-name">Atorvastatin</td>
+                        <td>Atorvastatin</td>
+                        <td>40 mg</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td>Hypercholesterinämie</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td class="med-name">Perenterol</td>
+                        <td>Saccharomyces boulardii</td>
+                        <td>-</td>
+                        <td>Kps</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td>Diarrhoe</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td class="med-name">Crataegutt</td>
+                        <td>Weißdorn-Extrakt</td>
+                        <td>-</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td>Herzinsuffizienz</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td class="med-name">Movicol</td>
+                        <td>Macrogol</td>
+                        <td>-</td>
+                        <td>Btl</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td>Obstipation</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td class="med-name">Solitamar</td>
+                        <td>Solifenacin/Tamsulosin</td>
+                        <td>6/0,4 mg</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td>Benigne Prostatahyperplasie</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td class="med-name">Madopar T</td>
+                        <td>Levodopa/Benserazid</td>
+                        <td>100/25 mg</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">1</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td>Morbus Parkinson</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td class="med-name">Madopar Depot</td>
+                        <td>Levodopa/Benserazid</td>
+                        <td>100/25 mg</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td>Morbus Parkinson (Retard)</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td class="med-name">Quetiapin</td>
+                        <td>Quetiapin</td>
+                        <td>25 mg</td>
+                        <td>Tbl</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">-</td>
+                        <td class="time-cell">1</td>
+                        <td>Schlafstörungen</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="qr-section">
+            <h2>🔲 Bundesmedikationsplan QR-Code</h2>
+            
+            <div class="success-message">
+                ✅ <strong>QR-Code bereit!</strong> Scanbar von allen deutschen Ärzten und Apotheken<br>
+                📄 <strong>PDF erstellen:</strong> "Drucken/Als PDF speichern" klicken → im Dialog "Ziel: Als PDF speichern" wählen
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 8px;">
+                <button class="button" onclick="window.print()">🖨️ Drucken / Als PDF speichern</button>
+                <button class="button button-green" onclick="copyQRData()">📋 QR-Daten kopieren</button>
+                <button class="button" onclick="downloadPlan()">📄 Backup-Textdatei</button>
+            </div>
+            
+            <div class="qr-container">
+                <div class="qr-display">
+                    <h3>🔲 QR-Code (zum Scannen)</h3>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=@BMP30%0AN:Peuckert%0AV:Wolfgang%0AG:19381223%0AVN:%0AA:Schlehenweg%2012,%2034266%20Niestetal%0AT:%0AM1:Empagliflozin|Jardiance|10%20mg|Tablette|1|||Tbl|7:00%20Uhr|Herzinsuffizienz%0AM2:Apixaban|Eliquis|2,5%20mg|Tablette|1||1|Tbl|7:00%20und%2019:00%20Uhr|Antikoagulation%0AM3:Atorvastatin|Atorvastatin|40%20mg|Tablette|||1|Tbl|19:00%20Uhr|Hypercholesterinämie%0AM4:Saccharomyces%20boulardii|Perenterol||Kapsel||1||Kps|11:00%20Uhr|Diarrhoe%0AM5:Weißdorn-Extrakt|Crataegutt||Tablette|||1|1|Tbl|17:00%20und%2022:00%20Uhr|Herzinsuffizienz%0AM6:Macrogol|Movicol||Pulver|1|||Btl|7:00%20Uhr|Obstipation%0AM7:Solifenacin/Tamsulosin|Solitamar|6/0,4%20mg|Tablette|1|||Tbl|10:00%20Uhr|Benigne%20Prostatahyperplasie%0AM8:Levodopa/Benserazid|Madopar%20T|100/25%20mg|Tablette|1|1|1|Tbl|7:00,%2011:00,%2017:00%20Uhr|Morbus%20Parkinson%0AM9:Levodopa/Benserazid|Madopar%20Depot|100/25%20mg|Tablette||||1|Tbl|22:00%20Uhr|Morbus%20Parkinson%20(Retard)%0AM10:Quetiapin|Quetiapin|25%20mg|Tablette||||1|Tbl|22:00%20Uhr|Schlafstörungen%0AD:20250719" 
+                         alt="QR-Code für Bundesmedikationsplan" 
+                         class="qr-image"
+                         id="qrImage">
+                    <p style="font-size: 9px; color: #666; margin: 3px 0;">
+                        📱 Scanbar von medizinischen Apps<br>
+                        🏥 Alle deutschen Ärzte/Apotheken
+                    </p>
+                </div>
+                
+                <div class="qr-info">
+                    <h3>📄 QR-Code Daten (BMP30-Format)</h3>
+                    <div class="qr-data" id="qrData">@BMP30
+N:Peuckert
+V:Wolfgang
+G:19381223
+VN:
+A:Schlehenweg 12, 34266 Niestetal
+T:
+M1:Empagliflozin|Jardiance|10 mg|Tablette|1|||Tbl|7:00 Uhr|Herzinsuffizienz
+M2:Apixaban|Eliquis|2,5 mg|Tablette|1||1|Tbl|7:00 und 19:00 Uhr|Antikoagulation
+M3:Atorvastatin|Atorvastatin|40 mg|Tablette|||1|Tbl|19:00 Uhr|Hypercholesterinämie
+M4:Saccharomyces boulardii|Perenterol||Kapsel||1||Kps|11:00 Uhr|Diarrhoe
+M5:Weißdorn-Extrakt|Crataegutt||Tablette|||1|1|Tbl|17:00 und 22:00 Uhr|Herzinsuffizienz
+M6:Macrogol|Movicol||Pulver|1|||Btl|7:00 Uhr|Obstipation
+M7:Solifenacin/Tamsulosin|Solitamar|6/0,4 mg|Tablette|1|||Tbl|10:00 Uhr|Benigne Prostatahyperplasie
+M8:Levodopa/Benserazid|Madopar T|100/25 mg|Tablette|1|1|1|Tbl|7:00, 11:00, 17:00 Uhr|Morbus Parkinson
+M9:Levodopa/Benserazid|Madopar Depot|100/25 mg|Tablette||||1|Tbl|22:00 Uhr|Morbus Parkinson (Retard)
+M10:Quetiapin|Quetiapin|25 mg|Tablette||||1|Tbl|22:00 Uhr|Schlafstörungen
+D:20250719</div>
+                    <p style="font-size: 8px; color: #666; margin: 3px 0;">
+                        ℹ️ Bundesmedikationsplanschema BMP30-Standard
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📋 Bundesmedikationsplan nach BfArM-Vorgaben • ⚠️ Alle Angaben vor Verwendung prüfen • 📅 Erstellt: 19.07.2025</p>
+        </div>
+    </div>
+
+    <script>
+        function copyQRData() {
+            const qrData = document.getElementById('qrData').textContent;
+            navigator.clipboard.writeText(qrData).then(function() {
+                alert('✅ QR-Code-Daten kopiert!');
+            }, function(err) {
+                alert('❌ Fehler beim Kopieren: ' + err);
+            });
+        }
+
+        function downloadPlan() {
+            const content = `BUNDESMEDIKATIONSPLAN
+
+Patient: Wolfgang Peuckert
+Geburtsdatum: 23.12.1938
+Adresse: Schlehenweg 12, 34266 Niestetal
+
+MEDIKATION - EINNAHMEZEITEN:
+================================================================================
+
+1. Jardiance (Empagliflozin) 10 mg Tbl
+   ➤ 7:00 Uhr (1 Tablette)
+   Indikation: Herzinsuffizienz
+
+2. Eliquis (Apixaban) 2,5 mg Tbl  
+   ➤ 7:00 Uhr (1 Tablette)
+   ➤ 19:00 Uhr (1 Tablette)
+   Indikation: Antikoagulation
+
+3. Atorvastatin 40 mg Tbl
+   ➤ 19:00 Uhr (1 Tablette)
+   Indikation: Hypercholesterinämie
+
+4. Perenterol (Saccharomyces boulardii) Kps
+   ➤ 11:00 Uhr (1 Kapsel)
+   Indikation: Diarrhoe
+
+5. Crataegutt (Weißdorn-Extrakt) Tbl
+   ➤ 17:00 Uhr (1 Tablette)
+   ➤ 22:00 Uhr (1 Tablette)
+   Indikation: Herzinsuffizienz
+
+6. Movicol (Macrogol) Btl
+   ➤ 7:00 Uhr (1 Beutel)
+   Indikation: Obstipation
+
+7. Solitamar (Solifenacin/Tamsulosin) 6/0,4 mg Tbl
+   ➤ 10:00 Uhr (1 Tablette)
+   Indikation: Benigne Prostatahyperplasie
+
+8. Madopar T (Levodopa/Benserazid) 100/25 mg Tbl
+   ➤ 7:00 Uhr (1 Tablette)
+   ➤ 11:00 Uhr (1 Tablette)
+   ➤ 17:00 Uhr (1 Tablette)
+   Indikation: Morbus Parkinson
+
+9. Madopar Depot (Levodopa/Benserazid) 100/25 mg Tbl
+   ➤ 22:00 Uhr (1 Tablette)
+   Indikation: Morbus Parkinson (Retard)
+
+10. Quetiapin 25 mg Tbl
+   ➤ 22:00 Uhr (1 Tablette)
+   Indikation: Schlafstörungen
+
+EINNAHMEÜBERSICHT NACH UHRZEITEN:
+================================================================================
+7:00 Uhr:  Jardiance, Eliquis, Movicol, Madopar T
+10:00 Uhr: Solitamar
+11:00 Uhr: Perenterol, Madopar T
+17:00 Uhr: Crataegutt, Madopar T
+19:00 Uhr: Eliquis, Atorvastatin
+22:00 Uhr: Crataegutt, Madopar Depot, Quetiapin
+
+================================================================================
+Erstellt am: 19.07.2025
+Bundesmedikationsplan nach BfArM-Vorgaben
+
+QR-CODE DATEN (BMP30):
+@BMP30
+N:Peuckert
+V:Wolfgang
+G:19381223
+VN:
+A:Schlehenweg 12, 34266 Niestetal
+T:
+M1:Empagliflozin|Jardiance|10 mg|Tablette|1|||Tbl|7:00 Uhr|Herzinsuffizienz
+M2:Apixaban|Eliquis|2,5 mg|Tablette|1||1|Tbl|7:00 und 19:00 Uhr|Antikoagulation
+M3:Atorvastatin|Atorvastatin|40 mg|Tablette|||1|Tbl|19:00 Uhr|Hypercholesterinämie
+M4:Saccharomyces boulardii|Perenterol||Kapsel||1||Kps|11:00 Uhr|Diarrhoe
+M5:Weißdorn-Extrakt|Crataegutt||Tablette|||1|1|Tbl|17:00 und 22:00 Uhr|Herzinsuffizienz
+M6:Macrogol|Movicol||Pulver|1|||Btl|7:00 Uhr|Obstipation
+M7:Solifenacin/Tamsulosin|Solitamar|6/0,4 mg|Tablette|1|||Tbl|10:00 Uhr|Benigne Prostatahyperplasie
+M8:Levodopa/Benserazid|Madopar T|100/25 mg|Tablette|1|1|1|Tbl|7:00, 11:00, 17:00 Uhr|Morbus Parkinson
+M9:Levodopa/Benserazid|Madopar Depot|100/25 mg|Tablette||||1|Tbl|22:00 Uhr|Morbus Parkinson (Retard)
+M10:Quetiapin|Quetiapin|25 mg|Tablette||||1|Tbl|22:00 Uhr|Schlafstörungen
+D:20250719`;
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Medikationsplan_Peuckert_Wolfgang.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# WSL2 Konfiguration für stabileren Betrieb
+# Kopiere nach C:\Users\<username>\.wslconfig
+
+[wsl2]
+# Mehr Speicher für WSL2
+memory=4GB
+
+# Mehr Swap-Space
+swap=2GB
+
+# Prozessor-Kerne
+processors=2
+
+# Wichtig: networkingMode NICHT auf mirrored setzen!
+# networkingMode=mirrored # AUSKOMMENTIERT LASSEN
